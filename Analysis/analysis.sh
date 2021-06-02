@@ -45,10 +45,20 @@ do
 		echo -e "\n----- SNV Calling Statistics-----"
 		bcftools stats \
 			${dir}/${ref}/vcf/${sample}_filtered.vcf.gz > ${dir}/${ref}/vcf/${sample}_filtered_stats
+		
+		bcftools query \
+			-f '%CHROM\t%POS\t%REF\t%ALT[\t%SAMPLE=%GT]\n' \
+			${dir}/${ref}/vcf/${sample}_filtered.vcf.gz > ${dir}/${ref}/vcf/${sample}_filtered_GT
 
 	done
 	bcftools stats \
 			${dir}/${ref}/BH1206_${ref}_filtered.vcf.gz > ${dir}/${ref}/BH1206_${ref}_filtered_stats
+done
+
+for sample in ${samples[@]}
+do
+	echo -e "${sample} "
+	zcat ${data_dir}/${sample}.fq.gz | echo $((`wc -l`/4))
 done
 
 while [ "$(jobs -rp | wc -l)" -gt 0 ]; do
